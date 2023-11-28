@@ -5,6 +5,7 @@ import { PollResult } from './schemas/pollresult.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ChatGateway } from 'src/chat/chat.gateway';
+import { CrmService } from 'src/crm/crm.service';
 
 @Injectable()
 export class PollresultService {
@@ -12,14 +13,18 @@ export class PollresultService {
   constructor(
     @InjectModel(PollResult.name) private pollResultModel: Model<PollResult>,
     @Inject(ChatGateway) private chatcmd: ChatGateway,
+    @Inject(CrmService) private crmService: CrmService
   ) { }
 
   async create(createPollresultDto: CreatePollresultDto) {
-    const createdPlresult = await new this.pollResultModel(createPollresultDto);
-    const { _id, staff__id, pollGrp_id, status } = createdPlresult;
+    const newdPlresult = await new this.pollResultModel(createPollresultDto);
+    if (newdPlresult.crm['costumer'] && newdPlresult.crm['product']) {
+      await this.crmService.create(newdPlresult, newdPlresult._id.toString());
+    }
+    const { _id, staff__id, pollGrp_id, status } = newdPlresult;
     const adata = { status, pollGrp_id }
     await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), staff__id, staff__id, adata);
-    return createdPlresult.save();
+    return newdPlresult.save();
   }
 
   async findByGroup(pollGrp_id: string): Promise<PollResult[]> {
@@ -49,6 +54,9 @@ export class PollresultService {
     const { staff__id, pollGrp_id, status } = updatePollresultDto;
     const adata = { status, pollGrp_id }
     await this.chatcmd.handleNotifCMD('pollresult', id, user.staff__id, staff__id, adata);
+    if (updatePollresultDto.ended) {
+      
+    }
     return await this.pollResultModel.findByIdAndUpdate(id, updatePollresultDto);
   }
 

@@ -19,6 +19,7 @@ import { ChatModule } from './chat/chat.module';
 import { CrmModule } from './crm/crm.module';
 import { CostumerModule } from './costumer/costumer.module';
 import { ProductModule } from './product/product.module';
+// import { CrmService } from './crm/crm.service';
 
 @Module({
   imports: [

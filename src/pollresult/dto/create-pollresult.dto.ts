@@ -8,6 +8,9 @@ export class CreatePollresultDto {
     chats?: object[];
 
     @IsOptional()
+    crm?: object;
+
+    @IsOptional()
     @IsNumber()
     date_end?: number;
 

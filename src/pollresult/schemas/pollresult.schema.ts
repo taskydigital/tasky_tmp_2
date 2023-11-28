@@ -11,6 +11,9 @@ export class PollResult {
     @Prop({ type: [Object] })
     chats: any[];
 
+    @Prop({ type: Object })
+    crm?: any;
+
     @Prop()
     date_end_schedule: number;
 

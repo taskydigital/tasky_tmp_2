@@ -38,6 +38,13 @@ export class CreatePollsGroupDto {
     controlList?: object[];
 
     @IsOptional()
+    costumerList?: string[]
+
+    @IsOptional()
+    @IsBoolean()
+    crm?: boolean;
+
+    @IsOptional()
     @IsNumber()
     date_end?: number;
 
@@ -110,6 +117,9 @@ export class CreatePollsGroupDto {
     @IsOptional()
     @IsString()
     pollResult_id?: string;
+
+    @IsOptional()
+    productList?: string;
     
     @IsNotEmpty()
     @IsBoolean()

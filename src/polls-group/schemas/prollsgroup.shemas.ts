@@ -36,6 +36,11 @@ export class PollGroups {
     controlList?: object[];
 
     @Prop()
+    costumerList?: string[]
+    @Prop()
+    crm?: boolean;
+
+    @Prop()
     date_end?: number;
 
     @Prop()
@@ -92,6 +97,9 @@ export class PollGroups {
 
     @Prop()
     pollResult_id?: string;
+
+    @Prop()
+    productList?: string[]
     
     @Prop()
     ref: boolean; // En true consultar la base de datos

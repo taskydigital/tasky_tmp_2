@@ -65,7 +65,7 @@ export class CreateStaffDto {
     platform?: string; // nequi daviplata 
 
     @IsOptional()
-    pollresult_appoint?: string[];
+    appoint?: string[];
 
 // K: Es tasker, P: Es supplier, F: Edita staff, U: Edita Usuario, D: Edita PollGroup (directorio) R: edita poll resulto
     @IsOptional()

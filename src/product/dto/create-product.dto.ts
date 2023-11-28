@@ -4,7 +4,7 @@ export class CreateProductDto {
 
     @IsNotEmpty()
     @IsString()
-    code: string;
+    id: string;
 
     @IsOptional()
     @IsString()

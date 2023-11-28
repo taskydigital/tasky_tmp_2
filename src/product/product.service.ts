@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product, ProductDocument } from './schemas/product.schema';
+import { Product } from './schemas/product.schema';
 import { Workbook } from 'exceljs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class ProductService {
 
-  constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>,
+  constructor(@InjectModel(Product.name) private productModel: Model<Product>,
     private jwtAuthServ: JwtService) { }
 
   create(createProductDto: CreateProductDto) {
@@ -23,14 +23,14 @@ export class ProductService {
     // const pictArray: string[] = [];
     const workbook = new Workbook();
     await workbook.xlsx.readFile(file.path).then((workbook) => {
-      const worksheetStaff = workbook.getWorksheet("staff");
+      const worksheetProd = workbook.getWorksheet("staff");
       const headerRows = 2;
-      const staffRowC = worksheetStaff.actualRowCount; // determine the range of populated data
+      const staffRowC = worksheetProd.actualRowCount; // determine the range of populated data
       for (let i = headerRows; i <= staffRowC; i++) {
         const formData = {
-          'code': worksheetStaff.getRow(i).getCell(1).value,
-          'name': worksheetStaff.getRow(i).getCell(2).value,
-          'description': worksheetStaff.getRow(i).getCell(3).value,
+          'id': worksheetProd.getRow(i).getCell(1).value,
+          'name': worksheetProd.getRow(i).getCell(2).value,
+          'description': worksheetProd.getRow(i).getCell(3).value,
         }
         thisArray.push(formData as unknown as Product);
       }
@@ -45,7 +45,10 @@ export class ProductService {
   }
 
   findAll() {
-    return `This action returns all product`;
+    // const all = await this.productModel.find();
+    // return all;
+    // console.log(toto);
+    return this.productModel.find().exec();
   }
 
   findOne(id: number) {

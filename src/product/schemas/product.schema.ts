@@ -9,7 +9,7 @@ export type ProductDocument = HydratedDocument<Product>;
 export class Product {
 
     @Prop()
-    code: string;
+    id: string;
 
     @Prop()
     description?: string;
