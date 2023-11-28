@@ -17,6 +17,9 @@ export class Staff {
     age?: number;
 
     @Prop()
+    city?: string;
+
+    @Prop()
     company_id?: string; // Nombre de la empresa a la que pertenece
 
     @Prop()
@@ -51,6 +54,9 @@ export class Staff {
 
     @Prop()
     platform?: string; // nequi daviplata 
+
+    @Prop()
+    pollresult_appoint?: string[];
 
     @Prop()
     rol?: string[]

@@ -15,9 +15,11 @@ export class PollsGroupController {
     return await this.pollsGroupService.create(createPollsGroupDto);
   }
 
+  @Roles('K')
+  @UseGuards(RolesGuard)
   @Get('/exp')
-  async findExported() {
-    return await this.pollsGroupService.findByExported();
+  async findExported(@User() user: any) {
+    return await this.pollsGroupService.findByExported(user.id);
   }
 
   @Roles('D')

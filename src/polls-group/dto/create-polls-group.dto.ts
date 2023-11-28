@@ -126,8 +126,11 @@ export class CreatePollsGroupDto {
     @IsNumber()
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
 
-    @IsNotEmpty()
+    @IsOptional()
     taskerList: string[]; // Los Ids del staff
+
+    @IsOptional()
+    taskerNameList: string[]; // Los Ids del staff
 
     @IsOptional()
     @IsNumber()

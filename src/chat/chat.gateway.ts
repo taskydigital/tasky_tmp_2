@@ -10,9 +10,9 @@ import { NotifPayLoad } from './entities/notification.entity';
 export interface CollectionNotification {
   collection?: string; // PollGroups, PollResult, ...
   field_id?: string; /// _id de el elemento en la colección
-  fieldId?: string; /// id de el elemento en la colección
-  staff__id?: string; // _id del origen del cambio
-  tStaff__id?: string; // nombre del origen del cambio
+  // fieldId?: string; /// id de el elemento en la colección
+  user_id?: string; // _id del origen del cambio
+  usert_id?: string; // nombre del origen del cambio
   date?: number; // Fecha de la actualización
   data?: any;
 }
@@ -154,9 +154,8 @@ export class ChatGateway {
   handleNotifCMD(
     collection: string,
     field_id: string,
-    fieldId: string,
-    staff__id: string,
-    tStaff__id: string, // Staff a quien se dirige la accion
+    user_id: string,
+    usert_id: string, // Staff a quien se dirige la accion
     data: any
   ) {
     // Get list of subscriber clients
@@ -169,7 +168,7 @@ export class ChatGateway {
     */
     if (soketList.length > 0) {
       const payload: CollectionNotification = {
-        collection, field_id, fieldId, staff__id, tStaff__id,
+        collection, field_id, user_id, usert_id,
         date: Date.now(),
         data
       }

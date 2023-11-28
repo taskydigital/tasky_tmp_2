@@ -106,7 +106,10 @@ export class PollGroups {
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
 
     @Prop()
-    taskerList: string[]; // Los Ids del staff
+    taskerList?: string[]; // Los Ids del staff
+
+    @Prop()
+    taskerNameList?: string[]; // Los Ids del staff
 
     @Prop()
     total?: number; // Total de encuestas requeridas

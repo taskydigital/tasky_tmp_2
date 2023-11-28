@@ -33,8 +33,8 @@ export class PollsGroupService {
     return await this.plgpModel.findOne({ id }).exec();
   }
 
-  async findByExported(): Promise<PollGroups[]> {
-    return await this.plgpModel.find({ 'exported': true }).exec();
+  async findByExported(id: string): Promise<PollGroups[]> {
+    return await this.plgpModel.find({ 'exported': true, taskerList: {$in: id}}).exec();
   }
 
   async findAll(): Promise<PollGroups[]> {

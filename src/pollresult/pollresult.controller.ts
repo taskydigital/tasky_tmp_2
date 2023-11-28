@@ -135,14 +135,14 @@ export class PollresultController {
     return this.pollresultService.findAll();
   }
 
-  @Roles('KP')
+  @Roles('A')
   @UseGuards(RolesGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updatePollresultDto: UpdatePollresultDto, @User() user: any) {
     return this.pollresultService.update(id, updatePollresultDto, user);
   }
 
-  @Roles('KP')
+  @Roles('A')
   @UseGuards(RolesGuard)
   @Put('partial/:id')
   updatePartial(@Param('id') id: string, @Body() data: any, @User() user: any) {

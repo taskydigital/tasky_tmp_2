@@ -21,6 +21,13 @@
           "validators": { "required": true }
         },
         {
+          "name": "city",
+          "label": "Ciudad de residencia",
+          "type": "text",
+          "style": "w-3/4",
+          "validators": { "required": true }
+        },
+        {
           "name": "email",
           "label": "Correo electrónico",
           "type": "text",

@@ -18,7 +18,7 @@ export class PollresultService {
     const createdPlresult = await new this.pollResultModel(createPollresultDto);
     const { _id, staff__id, pollGrp_id, status } = createdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), '', staff__id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), staff__id, staff__id, adata);
     return createdPlresult.save();
   }
 
@@ -48,17 +48,20 @@ export class PollresultService {
   async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
     const { staff__id, pollGrp_id, status } = updatePollresultDto;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD('pollresult', id, '', user.staff__id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD('pollresult', id, user.staff__id, staff__id, adata);
     return await this.pollResultModel.findByIdAndUpdate(id, updatePollresultDto);
   }
 
   async updatePartial(id: string, data: any, user: any) {
     const { fieldName, staff__id, chats, status, pollGrp_id } = data;
+    
     if (fieldName === 'status') {
       const adata = { status, pollGrp_id }
-      await this.chatcmd.handleNotifCMD('pollresult', id, '', user.staff__id, staff__id, adata);
+      await this.chatcmd.handleNotifCMD('pollresult', id, user.id, staff__id, adata);
     } else {
-      await this.chatcmd.handleNotifCMD('chat', id, '', user.staff__id, staff__id, pollGrp_id);
+      const msg = chats[chats.length - 1];
+      const adata = { status, pollGrp_id, msg }
+      await this.chatcmd.handleNotifCMD('chat', id, user.id, staff__id, adata);
     }
     return await this.pollResultModel.findByIdAndUpdate(id, { $set: { chats, status } });
   }
@@ -75,7 +78,7 @@ export class PollresultService {
       options['date_end'] = { $lt: date_end };
     }
     if (pollGrpList.length > 0) {
-      options['pollGrp_id'] = pollGrpList;
+      options['pollGrp_id'] = {$in: pollGrpList};
     }
 
     (await this.pollResultModel.find(options))

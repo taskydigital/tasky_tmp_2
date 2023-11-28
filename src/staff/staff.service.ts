@@ -6,6 +6,7 @@ import { Staff } from './schemas/staff.schema';
 import { Model } from 'mongoose';
 import { hash, compare } from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
+import { Workbook } from 'exceljs';
 
 @Injectable()
 export class StaffService {
@@ -28,7 +29,7 @@ export class StaffService {
       updateStaffDto.names = process.env.MASTER_EMAIL;
       updateStaffDto.active = true;
       // updateStaffDto.password = '';
-      updateStaffDto.rol = ['K','P','F','U','D','KP'];
+      updateStaffDto.rol = ['K', 'P', 'F', 'U', 'D', 'A'];
       // let id = ObjectId  isValidObjectId(process.env.MASTER_EMAIL);
       const query = { email: process.env.MASTER_EMAIL }
       // Por ahora agrego password pero en el futuro podrá ser solo el correo
@@ -43,7 +44,7 @@ export class StaffService {
     // ......................
     // return await this.staffModel.findOne({ email: email }).exec();
 
- 
+
     // const {email, password} = updateStaffDto;
     const userStaff = await this.staffModel.findOne({ email });
     if (!userStaff) throw new HttpException('USER_NOT_FOUND', 404);
@@ -58,25 +59,58 @@ export class StaffService {
     if (!checkPass) throw new HttpException('INVALID_PASSWORD', 403);
 
     const payload = { id: userStaff._id, name: userStaff.names, rol: userStaff.rol }
-//     const token = await this.jwtAuthServ.signAsync(payload);
+    //     const token = await this.jwtAuthServ.signAsync(payload);
     const token = this.jwtAuthServ.sign(payload);
     const data = { userStaff, token };
     return data;
   }
 
   // ........................................
-  async findByActive(active: boolean): Promise<Staff[]> {
-    return await this.staffModel.find({ active }).exec();
+  findByActive(active: boolean, arol: string): Promise<Staff[]> {
+    return this.staffModel.find({ active, rol: { $in: [arol] } }).exec();
   }
 
-  async findAll(): Promise<Staff[]> {
+  findAll(): Promise<Staff[]> {
     // paginated
-    return await this.staffModel.find().exec();
+    return this.staffModel.find().exec();
   }
 
-  async findByStars(stars: number): Promise<Staff[]> {
+  findByStars(stars: number, arol: string): Promise<Staff[]> {
     // paginated
-    return await this.staffModel.find({ stars }).exec();
+    return this.staffModel.find({ active: true, stars, rol: { $in: arol } }).exec();
+  }
+
+  findByQueryFilter(filterQuery: any): Promise<Staff[]> {
+    const { queryType, active, age_from, age_to, city, rol, stars, studyLevel } = filterQuery;
+    const options = {rol: {$in: rol}};
+    switch (queryType) {
+      case '0':
+        return this.staffModel.find().exec();
+        break;
+      case '1': // Active
+        options['active'] = active;
+        break;
+      case '2': // stars
+        options['active'] = true;
+        options['stars'] = stars;
+        break;
+      case '3': // Full
+        options['active'] = true;
+        if (age_from && age_to) {
+          options['age'] = { $gt: age_from };
+          options['age'] = { $lt: age_to };
+        }
+        if (city && city.length > '') {
+          const aCity = city.split[','];
+          options['city'] = { $in: aCity };
+        }
+        if (studyLevel != null) {
+          options['studyLevel'] = studyLevel;
+        }
+
+        break;
+    }
+    return this.staffModel.find(options)
   }
 
   // ......................................................
@@ -91,5 +125,38 @@ export class StaffService {
 
   async remove(id: string) {
     return await this.staffModel.findByIdAndRemove(id);
+  }
+
+  // ........................... IMPORT FROM EXCEL ................
+
+  async excel2Staff(file: Express.Multer.File) {
+    // console.log(file);
+    const staffArray: Staff[] = [];
+    // const pictArray: string[] = [];
+    const workbook = new Workbook();
+    await workbook.xlsx.readFile(file.path).then((workbook) => {
+      const worksheetStaff = workbook.getWorksheet("staff");
+      const headerRows = 2;
+      const staffRowC = worksheetStaff.actualRowCount; // determine the range of populated data
+      for (let i = headerRows; i <= staffRowC; i++) {
+        const formData = {
+          'active': true,
+          'email': worksheetStaff.getRow(i).getCell(5).value,
+          'id': worksheetStaff.getRow(i).getCell(3).value,
+          'names': worksheetStaff.getRow(i).getCell(1).value,
+          'phone': worksheetStaff.getRow(i).getCell(6).value,
+          'rol': worksheetStaff.getRow(i).getCell(7).value.toString().split(',').push('A'),
+          'second_names': worksheetStaff.getRow(2).getCell(7).value
+        }
+        staffArray.push(formData as unknown as Staff);
+      }
+    });
+    await this.staffModel.deleteMany();
+    await this.staffModel.insertMany(staffArray).then((result: any) => {
+      if (result.length > 0) {
+        return { status: 200, message: 'ok' }
+      }
+    });
+
   }
 }

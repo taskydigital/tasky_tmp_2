@@ -16,6 +16,9 @@ import { CompanyModule } from './company/company.module';
 import { PollresultModule } from './pollresult/pollresult.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
+import { CrmModule } from './crm/crm.module';
+import { CostumerModule } from './costumer/costumer.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -26,7 +29,10 @@ import { ChatModule } from './chat/chat.module';
     StaffModule,
     CompanyModule,
     PollresultModule,
-    ChatModule
+    ChatModule,
+    CostumerModule,
+    ProductModule,
+    CrmModule
     ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

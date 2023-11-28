@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('staff')
 export class StaffController {
@@ -25,18 +27,43 @@ export class StaffController {
   @UseGuards(RolesGuard)
   @Get('filter/data?')
   findByQuery(@Query() filterQuery) {
-    const { queryType, active, stars } = filterQuery;
-    // const adata = JSON.parse(data);
-    switch (queryType) {
+    return this.staffService.findByQueryFilter(filterQuery);
+
+
+    /*
+    const { queryType, active, stars, rol } = filterQuery;
+    switch (Number(queryType)) {
       case 1: // Active
-        return this.staffService.findByActive(active);
+        return this.staffService.findByActive(active, rol);
         break;
       case 2: // stars
-        return this.staffService.findByStars(stars);
+        return this.staffService.findByStars(stars, rol);
         break;
     }
     return this.staffService.findAll();
+    */
   }
+
+  // ........................... LISTADO DE STAFF EN EXCEL ............................
+
+  @Roles('P')
+  @UseGuards(RolesGuard)
+  @Post('excel2Staff')
+  @UseInterceptors(
+    FileInterceptor(
+      'file', {
+      storage: diskStorage({
+        destination: '.catalog/',
+        filename: function (_req, _file, cb) { cb(null, 'catalog.xlsx') }
+      }),
+    }
+    )
+  )
+  async excel2Staff(@UploadedFile() file: Express.Multer.File) {
+    await this.staffService.excel2Staff(file);
+  }
+
+      // ****
 
   @Roles('F')
   @UseGuards(RolesGuard)
