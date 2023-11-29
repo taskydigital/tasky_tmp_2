@@ -11,8 +11,23 @@ export class PollResult {
     @Prop({ type: [Object] })
     chats: any[];
 
+    @Prop()
+    crm: boolean;
+    
+    @Prop()
+    crm_costum_id?: string;
+
+    @Prop()
+    crm_costum_name?: string;
+
+    @Prop()
+    crm_prod_id?: string;
+
+    @Prop()
+    crm_prod_name?: string;
+
     @Prop({ type: Object })
-    crm?: any;
+    data?: any;
 
     @Prop()
     date_end_schedule: number;

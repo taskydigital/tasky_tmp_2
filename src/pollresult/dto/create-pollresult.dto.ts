@@ -7,8 +7,28 @@ export class CreatePollresultDto {
     @IsString()
     chats?: object[];
 
+    @IsNotEmpty()
+    @IsBoolean()
+    crm: boolean;
+
     @IsOptional()
-    crm?: object;
+    @IsString()
+    crm_costum_id?: string;
+
+    @IsOptional()
+    @IsString()
+    crm_costum_name?: string;
+
+    @IsOptional()
+    @IsString()
+    crm_prod_id?: string;
+
+    @IsOptional()
+    @IsString()
+    crm_prod_name?: string;
+
+    @IsOptional()
+    data?: any;
 
     @IsOptional()
     @IsNumber()

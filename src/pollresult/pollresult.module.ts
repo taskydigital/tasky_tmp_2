@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PollResult, PollsResultSchema } from './schemas/pollresult.schema';
 import { ChatModule } from 'src/chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
-import { CrmModule } from 'src/crm/crm.module';
+// import { CrmModule } from 'src/crm/crm.module';
 // import { CrmService } from 'src/crm/crm.service';
 
 @Module({
@@ -13,7 +13,7 @@ import { CrmModule } from 'src/crm/crm.module';
     ConfigModule.forRoot(),
     MongooseModule.forFeature([{ name: PollResult.name, schema: PollsResultSchema }]),
     ChatModule,
-    CrmModule
+    // CrmModule
   ],
   controllers: [PollresultController],
   providers: [PollresultService],
